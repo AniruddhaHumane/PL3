@@ -63,6 +63,9 @@ installing opencl
 We will modify visual studio for openCL
 refer to this video tutorial : https://youtu.be/YkoLrqO2kng
 
+executing OpenCL C code on Linux: 
+gcc filename.c -l /usr/local/cuda/include -L /usr/local/cuda/lib64 -fOpenMP
+
 
 
 
