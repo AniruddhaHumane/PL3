@@ -1,5 +1,5 @@
 # PL3
-progras I implemented in PL3
+programs I implemented in PL3
 
 *Please contribure and star my work if it was helpful*
 
@@ -37,6 +37,8 @@ install sbcl : (tar.gz) https://sourceforge.net/projects/sbcl/files/latest/downl
 -------------------------------------------------------------
 
 installing LEX and YACC
+
+you will need a c/c++ compiler, hence it is better to install it on linux
 lex : yum install flex / apt-get install flex
 yacc : yum install bison / apt-get install bison
 
