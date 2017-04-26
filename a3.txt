@@ -1,0 +1,52 @@
+(defvar A)
+(defvar B)
+(defvar choice 0)
+
+(write-line "Enter first number")
+(setf A (parse-integer(read-line)))
+(write-line "Enter second number")
+(setf B (parse-integer(read-line)))
+
+;(format t "~b ~o ~d ~X" A A A A)
+(defun addF (A B)
+(sb-thread:make-thread(lambda()(progn(sleep 0)
+	(format t "~d + ~d = ~d~%" A B (+ A B))))))
+
+(defun subF (A B)
+(sb-thread:make-thread(lambda()(progn(sleep 0)
+	(format t "~d - ~d = ~d~%" A B (- A B))))))
+
+(defun mulF (A B)
+(sb-thread:make-thread(lambda()(progn(sleep 0)
+	(format t "~d / ~d = ~d~%" A B (/ A (float B)))))))
+
+(defun divF (A B)
+(sb-thread:make-thread(lambda()(progn(sleep 0)
+	(format t "~d * ~d = ~d~%" A B (* A B))))))
+
+(loop
+(sleep 0.1)
+(format t "Enter your choice:  ~%1. Addition ~%2. Substraction ~%3. Division ~%4. Multiplication~%")
+(setf choice (parse-integer(read-line)))
+
+(case choice
+	(1 (addF A B))
+	(2 (subF A B))
+	(3 (mulF A B))
+	(4 (divF A B))
+	(otherwise (return)))
+)
+
+;64 bit multiplication
+(defvar mul 0)
+(setf mul 0)
+(defun multiply (i)
+	(if (not (= 0 (logand B (ash 1 i))))
+		(setf mul (+ mul (ash A i)))))
+
+(loop for i from 0 to 63 do
+	(sb-thread:make-thread(lambda()(multiply i))))
+
+
+(format t "Multiplication ~d ~%" mul)
+(format t "Multiplication ~b ~%" mul)

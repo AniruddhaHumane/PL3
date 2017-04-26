@@ -1,0 +1,48 @@
+from ftplib import FTP
+from subprocess import call
+
+#Steps
+#Connect lan cable to bbb
+#connect bbb to pc
+#login to bbb 192.168.7.2
+
+#changing IP address of bbb
+call("ifconfig eth0 192.168.x.x", shell=True)
+server = "192.168.5.71"
+usr = "print16-17"
+pwd = "123456"
+
+while True:
+	print("Enter your choice\n1. Machine to BBB\n 2.BBB to machine\n3. FTP to BBB\n4. BBB to FTP\n")
+	choice = int(input())
+	if choice is 1:
+		ipm = input("Enter ip address of machine ")
+		uname = input("Enter username ")
+		src = input("Enter full path of file ")
+		dest = input("Enter destination")
+		call("scp "+uname+"@"+ip+":"+src+" "+dest,shell=True)
+	if choice is 2:
+		ipm = input("Enter ip address of machine ")
+		uname = input("Enter username ")
+		src = input("Enter full path of file ")
+		dest = input("Enter destination")
+		#call("ssh cnlab@192.168.5.31 ls", shell=True)
+		call("scp "+src+" "+uname+"@"+ip+":"+dest, shell=True)
+	if choice is 3:
+		ftp = FTP(server)
+		ftp.login(usr,pwd)
+		ftp.retrlines("LIST")
+		filename = input("Enter Filename ")
+		ftp.retrbinary("RETR "+filename, open(filename,"wb").write)
+		ftp.quit()
+		call("ls -l | grep "+filename, shell=True)
+	if choice is 4:
+		ftp = FTP(server)
+		ftp.login(usr,pwd)
+		call("ls -l", shell=True)
+		filename = input("Enter filename ")
+		ftp.storbinary("STOR "+filename, open(filename, "rb"))
+		ftp.retrlines("LIST")
+		ftp.close()
+	if choice is not 1 or choice is not 2 or choice is not 3 or choice is not 4:
+		break

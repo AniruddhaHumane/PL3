@@ -1,0 +1,74 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <CL/cl.h>
+
+using namespace std;
+const char* code =
+"__kernel void arrayAdd(__global int* a, __global int* b, __global int* c){\n"
+"size_t id = get_global_id(0);\n"
+"c[id] = a[id]+b[id];\n"
+"}\n";
+
+int main() {
+	int a[50], b[50], res[50], size;
+	cout << "Enter size of vector" << endl;
+	cin >> size;
+	cout << "Enter first vector" << endl;
+	for (size_t i = 0; i < size; i++)
+		cin >> a[i];
+	cout << "Enter second vector" << endl;
+	for (size_t i = 0; i < size; i++)
+		cin >> b[i];
+	cl_platform_id platform_id;
+	cl_uint num_of_platforms;
+	if (clGetPlatformIDs(1, &platform_id, &num_of_platforms) != CL_SUCCESS) {
+		cout << "stderr: platform error" << endl;
+		return 1;
+	}
+	cl_device_id device_id;
+	cl_uint num_of_devices;
+	if (clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_ALL, 1, &device_id, &num_of_devices) != CL_SUCCESS) {
+		cout << "stderr: device error" << endl;
+		return 1;
+	}
+	cl_context_properties properties[3];
+	properties[0] = CL_CONTEXT_PLATFORM;
+	properties[1] = (cl_context_properties)platform_id;
+	properties[2] = 0;
+	cl_int err;
+	cl_context context = clCreateContext(properties, 1, &device_id, NULL, NULL, &err);
+	cl_command_queue cmdqueue = clCreateCommandQueue(context, device_id, 0, &err);
+	cl_program program = clCreateProgramWithSource(context, 1, (const char **)&code, NULL, &err );
+	if(clBuildProgram(program, 0 ,NULL, NULL, NULL, NULL) != CL_SUCCESS) {
+		cout << "stderr: Build error" << endl;
+		return 1;
+	}
+	cl_kernel kernel = clCreateKernel(program, "arrayAdd", &err);
+	cl_mem buffer1 = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*size, NULL, &err);
+	cl_mem buffer2 = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*size, NULL, &err);
+	cl_mem opbuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(int)*size, NULL, &err);
+	clEnqueueWriteBuffer(cmdqueue, buffer1, CL_TRUE, 0, sizeof(int)*size, &a, 0, NULL, NULL);
+	clEnqueueWriteBuffer(cmdqueue, buffer2, CL_TRUE, 0, sizeof(int)*size, &b, 0, NULL, NULL);
+	clSetKernelArg(kernel, 0, sizeof(cl_mem), &buffer1);
+	clSetKernelArg(kernel, 1, sizeof(cl_mem), &buffer2);
+	clSetKernelArg(kernel, 2, sizeof(cl_mem), &opbuffer);
+	size_t global = size;
+	clEnqueueNDRangeKernel(cmdqueue, kernel, 1, 0, &global, NULL, 0,  NULL, NULL);
+	clEnqueueReadBuffer(cmdqueue, opbuffer, CL_TRUE, 0, sizeof(int)*size, &res, 0, NULL, NULL);
+	cout << "Addition" << endl;
+	for (size_t i = 0; i < size; i++)
+		cout << res[i];
+	clReleaseMemObject(buffer1);
+	clReleaseMemObject(buffer2);
+	clReleaseMemObject(opbuffer);
+	clReleaseKernel(kernel);
+	clReleaseCommandQueue(cmdqueue);
+	clReleaseProgram(program);
+	clReleaseContext(context);
+
+
+	cin.get();
+	cin.get();
+	return 0;
+}

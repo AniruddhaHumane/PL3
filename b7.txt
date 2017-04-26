@@ -1,0 +1,65 @@
+#include <iostream>
+#include <stdio.h>
+#include <math.h>
+#include <omp.h>
+using namespace std;
+
+int main(){
+	int size, array[50], break_point, n, key, sep[50];
+	cout<<"Enter Size of array"<<endl;
+	cin>>size;
+	cout<<"Enter Array elements in ascending order"<<endl;
+	for (int i = 0; i < size; ++i)
+		cin>>array[i];
+	cout<<"Enter value of n for nary search"<<endl;
+	cin>>n;
+	cout<<"Enter value of key"<<endl;
+	cin>>key;
+	int left = 0;
+	int right = size-1;
+	if(key >= array[left] && key <= array[right]){
+		while (left != right){
+			cout<<"left : "<<left<<" Right : "<<right<<" Size : "<<size<<endl;
+			if(size < n){
+				#pragma omp parallel for num_threads(size)
+					for (int i = 0; i < size; ++i){
+						sep[i] = left + i;
+						int tid = omp_get_thread_num();
+						printf("qwert Thread %d allocated sep[%d]=%d\n",tid,i,sep[i]);
+					}
+			}else{
+				int interval = ceil((float)size/(float)n);
+				sep[0] = left;
+				sep[n] = right;
+				#pragma omp parallel for num_threads(n-1)
+					for (int i = 1; i < n; ++i){
+						sep[i] = left+interval*i-1;
+						int tid = omp_get_thread_num();
+						printf("qwert Thread %d allocated sep[%d]=%d\n",tid,i,sep[i]);
+					}
+			}
+			for (int i = 0; i <= n; ++i){
+				if (key  == array[sep[i]]){
+					int index = sep[i]+1;
+					cout<<"Element found at position "<<index<<endl;
+					break_point = 1;
+					break;
+				}
+				if(key <= array[sep[i]]){
+					right = sep[i];
+					if(i!=0)
+						left = sep[i-1]+1;
+					size = right-left+1;
+					break;
+				}
+			}
+			if(break_point)
+				break;
+		}
+	}
+	if(key <= array[left] || key >= array[right] || left == right){
+		cout<<"stderr: key error"<<endl;
+	}
+
+	return 0;
+}

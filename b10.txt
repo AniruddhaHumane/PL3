@@ -1,0 +1,79 @@
+------------------------SERVER-----------------------
+import java.io.*;
+import java.net.*;
+
+public class Server{
+	int cnt = 0;
+	ServerSocket SS = new ServerSocket(5005);
+	public static void main(String args[]) throws IOException{
+		new Server();
+	}
+	public Server() throws IOException{
+		while (true){
+		cnt++;
+		Client1 CC = new Client1(SS.accept(), cnt);
+		Thread T1 = new Thread(CC);
+		T1.start();
+		}
+	}
+}
+
+class Client1 implements Runnable{
+	int cnt;
+	Socket cs;
+	public Client1(Socket cs1, int cnt1){
+		this.cnt = cnt1;
+		this.cs = cs1;
+	}
+	public void run(){
+		try{
+			BufferedReader fromClient = new BufferedReader(new InputStreamReader(cs.getInputStream()));
+			PrintWriter toClient = new PrintWriter(cs.getOutputStream(), true);
+			System.out.println("Client "+cnt+" Connected :)");
+			toClient.println("Welcome Client "+cnt+" :)");
+			while(true){
+				String c = fromClient.readLine();
+				toClient.println(Integer.parseInt(c)*Integer.parseInt(c));
+				System.out.println("Client "+cnt+" Says: "+c);
+				if(c.equalsIgnoreCase("bye"))
+					break;
+			}
+			fromClient.close();
+			toClient.close();
+			cs.close();
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+	}
+}
+
+---------------------------------CLIENT---------------------------------
+
+import java.io.*;
+import java.net.*;
+
+class Client{
+	public static void main(String args[]) throws UnknownHostException, IOException{
+		Socket cs = new Socket("127.0.0.1",5005);
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(cs.getInputStream()));
+		BufferedReader fromClient = new BufferedReader(new InputStreamReader(System.in));
+		PrintWriter toServer = new PrintWriter(cs.getOutputStream(), true);
+		while(true){
+			String s = fromServer.readLine();
+			System.out.println("Server Says: "+s);
+			if(s.equalsIgnoreCase("bye"))
+				break;
+			System.out.print("Me: ");
+			String c = fromClient.readLine();
+			toServer.println(c);
+			if(c.equalsIgnoreCase("Bye")){
+				System.out.println("Bye :)");
+				break;
+			}
+		}
+		fromServer.close();
+		fromClient.close();
+		toServer.close();
+		cs.close();
+	}
+}

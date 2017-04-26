@@ -1,0 +1,55 @@
+import Adafruit_BBIO.GPIO as GPIO
+import time
+
+GPIO.setup("P8_3", GPIO.OUT) #First floor
+GPIO.setup("P8_5", GPIO.OUT) #second floor
+GPIO.setup("P8_7", GPIO.OUT) #third floor
+GPIO.setup("P8_4", GPIO.IN) #First floor
+GPIO.setup("P8_6", GPIO.IN) #Second Floor
+GPIO.setup("P8_8", GPIO.IN) #Third Floor
+
+currentFloor = 1
+GPIO.output("P8_3", GPIO.HIGH)
+
+while True:
+	if GPIO.input("P8_4") == 1:
+		if currentFloor == 2:
+			GPIO.output("P8_5", GPIO.LOW)
+			time.sleep(2)
+			GPIO.output("P8_3", GPIO.HIGH)
+			currentFloor = 1
+		if currentFloor == 3:
+			GPIO.output("P8_7", GPIO.LOW)
+			time.sleep(2)
+			GPIO.output("P8_5", GPIO.HIGH)
+			currentFloor = 2
+			GPIO.output("P8_5", GPIO.LOW)
+			time.sleep(2)
+			GPIO.output("P8_3", GPIO.HIGH)
+			currentFloor = 1
+	if GPIO.input("P8_6") == 1:
+		if currentFloor == 1:
+			GPIO.output("P8_3", GPIO.LOW)
+			time.sleep(2)
+			GPIO.output("P8_5", GPIO.HIGH)
+			currentFloor = 2
+		if currentFloor == 3:
+			GPIO.output("P8_7", GPIO.LOW)
+			time.sleep(2)
+			GPIO.output("P8_5", GPIO.HIGH)
+			currentFloor = 2
+	if GPIO.input("P8_8") == 1:
+		if currentFloor == 2:
+			GPIO.output("P8_5", GPIO.LOW)
+			time.sleep(2)
+			GPIO.output("P8_7", GPIO.HIGH)
+			currentFloor = 3
+		if currentFloor == 1:
+			GPIO.output("P8_3", GPIO.LOW)
+			time.sleep(2)
+			GPIO.output("P8_5", GPIO.HIGH)
+			currentFloor = 2
+			GPIO.output("P8_5", GPIO.LOW)
+			time.sleep(2)
+			GPIO.output("P8_7", GPIO.HIGH)
+			currentFloor = 3
