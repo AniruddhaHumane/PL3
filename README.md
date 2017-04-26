@@ -11,9 +11,11 @@ for BeagleBoneBlack assignments
 
 *Connecting LED*
 ( i/p from GPIO ) OR ( i/p from GND ) --> LED
-i.e. 
-one input of OR gate is output from BBB GPIO pin
-other input is from GND
+
+i.e.
+
+one input of OR gate is output from BBB GPIO pin, 
+other input is from GND, 
 output of OR gate to LED 
 
 *Connecting SWITCH*
