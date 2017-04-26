@@ -9,22 +9,22 @@ INSTALLATION INSTRUCTIONS:
 
 for BeagleBoneBlack assignments
 
-  *Connecting LED*
-  ( i/p from GPIO ) OR ( i/p from GND ) --> LED
-  i.e. 
-  one input of OR gate is output from BBB GPIO pin
-  other input is from GND
-  output of OR gate to LED 
+*Connecting LED*
+( i/p from GPIO ) OR ( i/p from GND ) --> LED
+i.e. 
+one input of OR gate is output from BBB GPIO pin
+other input is from GND
+output of OR gate to LED 
 
-  *Connecting SWITCH*
-  one end of switch to VCC
-  other end to BBB GPIO pin as input
+*Connecting SWITCH*
+one end of switch to VCC
+other end to BBB GPIO pin as input
 
-  dont forget connect VCC 3.3 and gnd of BBB
+dont forget connect VCC 3.3 and gnd of BBB
   
-  ssh 192.168.7.2
+ssh 192.168.7.2
   
-  // if not connecting, remove everything from file using _gedit /.ssh/known_hosts_ 
+// if not connecting, remove everything from file using _gedit /.ssh/known_hosts_ 
  
 -------------------------------------------------------------
 
